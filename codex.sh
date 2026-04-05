@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# zLinebot Codex Master Full Meta Final Release
+# Codex Master Full Meta Final Release
 # Unified installer & orchestrator for all environments
 # ============================================================
 
@@ -31,12 +31,12 @@ case "$MODE" in
     ;;
   orchestrator)
     echo "[Codex] Running Master Orchestrator..." | tee -a $LOGFILE
-    bash zlinebot-master-orchestrator.sh | tee -a $LOGFILE
+    bash master-orchestrator.sh | tee -a $LOGFILE
     ;;
   release)
     echo "[Codex] Executing Final Release Workflow..." | tee -a $LOGFILE
     bash install_ultimate.sh | tee -a $LOGFILE
-    bash zlinebot-master-orchestrator.sh | tee -a $LOGFILE
+    bash master-orchestrator.sh | tee -a $LOGFILE
     echo "[Codex] Release build complete. Artifacts logged in $LOGFILE"
     ;;
   *)
