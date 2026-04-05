@@ -1,0 +1,17 @@
+# Node
+node_modules/
+dashboard/node_modules/
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# Flutter / Dart
+.dart_tool/
+.build/
+
+# Env files
+.env
