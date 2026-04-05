@@ -4,7 +4,7 @@ export default function Home() {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    fetch('/api/stats').then(r => r.json()).then(setData)
+    fetch('http://localhost:8000/metrics').then(r => r.json()).then(setData)
   }, [])
 
   if (!data) return <p>Loading...</p>
@@ -12,9 +12,8 @@ export default function Home() {
   return (
     <div>
       <h1>zSafeGuard Dashboard</h1>
-      <p>Users: {data.users}</p>
-      <p>Threats: {data.threats}</p>
-      <p>Revenue: ${data.revenue}</p>
+      <p>Service: {data.service}</p>
+      <p>Status: {data.status}</p>
     </div>
   )
 }

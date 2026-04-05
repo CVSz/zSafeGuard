@@ -1,7 +1,11 @@
+from pathlib import Path
+
 import joblib
 
-xgb = joblib.load("model/xgb.pkl")
-nn = joblib.load("model/nn.pkl")
+MODEL_DIR = Path(__file__).resolve().parent / "model"
+
+xgb = joblib.load(MODEL_DIR / "xgb.pkl")
+nn = joblib.load(MODEL_DIR / "nn.pkl")
 
 
 def predict(features):
