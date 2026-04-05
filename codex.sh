@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# zLinebot Codex Master Full Meta Final Release
+# Codex Master Full Meta Final Release
 # Unified installer & orchestrator for all environments
 # ============================================================
 
@@ -57,32 +57,32 @@ fi
 
 # --- Mode Selection ---
 case "$MODE" in
-basic)
-  log "[Codex] Running Basic Installation..."
-  run_script install.sh
-  ;;
-full)
-  log "[Codex] Running Full-stack Installation..."
-  run_script install_full.sh
-  ;;
-ultimate)
-  log "[Codex] Running Ultimate Deployment..."
-  run_script install_ultimate.sh
-  ;;
-orchestrator)
-  log "[Codex] Running Master Orchestrator..."
-  run_script zlinebot-master-orchestrator.sh
-  ;;
-release)
-  log "[Codex] Executing Final Release Workflow..."
-  run_script install_ultimate.sh
-  run_script zlinebot-master-orchestrator.sh
-  log "[Codex] Release build complete. Artifacts logged in ${LOGFILE}"
-  ;;
-*)
-  usage
-  exit 1
-  ;;
+  basic)
+    echo "[Codex] Running Basic Installation..." | tee -a $LOGFILE
+    bash install.sh | tee -a $LOGFILE
+    ;;
+  full)
+    echo "[Codex] Running Full-stack Installation..." | tee -a $LOGFILE
+    bash install_full.sh | tee -a $LOGFILE
+    ;;
+  ultimate)
+    echo "[Codex] Running Ultimate Deployment..." | tee -a $LOGFILE
+    
+    ;;
+  orchestrator)
+    echo "[Codex] Running Master Orchestrator..." | tee -a $LOGFILE
+    bash master-orchestrator.sh | tee -a $LOGFILE
+    ;;
+  release)
+    echo "[Codex] Executing Final Release Workflow..." | tee -a $LOGFILE
+    bash install_ultimate.sh | tee -a $LOGFILE
+    bash master-orchestrator.sh | tee -a $LOGFILE
+    echo "[Codex] Release build complete. Artifacts logged in $LOGFILE"
+    ;;
+  *)
+    echo "Usage: codex.sh {basic|full|ultimate|orchestrator|release}"
+    exit 1
+    ;;
 esac
 
 log "[Codex] Process finished successfully."
