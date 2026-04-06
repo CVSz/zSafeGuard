@@ -3,3 +3,7 @@ uvicorn
 joblib
 scikit-learn
 xgboost
+pydantic
+pytest
+httpx
+locust
