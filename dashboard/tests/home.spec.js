@@ -8,7 +8,7 @@ const hasChromiumSystemDeps = [
 
 test.skip(!hasChromiumSystemDeps, 'Skipping browser E2E test: missing Chromium system libraries (libatk).')
 
-test('homepage renders loading state', async ({ page }) => {
+test('homepage renders real-time dashboard shell', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByText('Loading...')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'zSafeGuard Real-time Risk Dashboard' })).toBeVisible()
 })

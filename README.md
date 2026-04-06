@@ -35,11 +35,16 @@ zSafeGuard คือโปรเจกต์ตัวอย่างสำหร
 
 ## ความสามารถหลัก
 
-1. **API วิเคราะห์ความเสี่ยง**
-   - Endpoint สำคัญ: `/`, `/health`, `/metrics`, `/analyze`
-   - `/analyze` รับ `features` แล้วคืนค่า `score` และสถานะ `risk`
+1. **API วิเคราะห์ความเสี่ยงแบบ Real-time**
+   - Endpoint สำคัญ: `/`, `/health`, `/metrics`, `/analyze`, `/events`, `/report`, `/stream`
+   - `/analyze` รับ `features` + `source` แล้วคืนค่า `score`, `risk`, `timestamp`
+   - `/stream` ส่งเหตุการณ์แบบ Server-Sent Events (SSE) สำหรับ dashboard real-time
 
-2. **โมเดล Ensemble**
+2. **รายงานและสถิติสำหรับ Dashboard**
+   - `/report` สรุปค่าเฉลี่ยคะแนน, distribution ของ SAFE/WARNING/RISK และ timeline
+   - Dashboard มี simulation API (`/api/simulate`) สำหรับสร้างข้อมูลทดสอบและดูผลสด
+
+3. **โมเดล Ensemble**
    - ใช้ผลจาก `xgb` และ `nn`
    - สูตรคำนวณ: `score = xgb*0.6 + nn*0.4`
    - แปลผล:
@@ -47,7 +52,7 @@ zSafeGuard คือโปรเจกต์ตัวอย่างสำหร
      - `WARNING` เมื่อ 0.5 < score <= 0.75
      - `RISK` เมื่อ score > 0.75
 
-3. **การ Deploy หลายระดับ**
+4. **การ Deploy หลายระดับ**
    - ระดับ Basic / Full / Ultimate / Orchestrator / Release ผ่าน `codex.sh`
 
 ## ความต้องการระบบ
