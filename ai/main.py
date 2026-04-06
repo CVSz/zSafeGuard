@@ -4,14 +4,22 @@ import logging
 import os
 from collections import Counter, deque
 from datetime import datetime, timezone
-from typing import List
+from typing import Annotated
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, Field
 
 from ai.ensemble import predict
+from ai.schemas import (
+    AnalyzeRequest,
+    AnalyzeResponse,
+    EventsResponse,
+    HealthResponse,
+    HomeResponse,
+    MetricsResponse,
+    ReportResponse,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("zsafeguard.ai")
@@ -19,7 +27,14 @@ logger = logging.getLogger("zsafeguard.ai")
 API_KEY = os.getenv("API_KEY")
 MAX_EVENT_HISTORY = int(os.getenv("MAX_EVENT_HISTORY", "500"))
 
-app = FastAPI(title="zSafeGuard AI")
+app = FastAPI(
+    title="zSafeGuard AI",
+    version="1.1.0",
+    description=(
+        "Risk analysis API for zSafeGuard. The API accepts a normalized "
+        "feature vector and returns score-based risk classifications."
+    ),
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,22 +46,17 @@ app.add_middleware(
 risk_events = deque(maxlen=MAX_EVENT_HISTORY)
 
 
-class AnalyzeRequest(BaseModel):
-    features: List[float] = Field(..., min_length=5, max_length=5)
-    source: str = Field(default="dashboard", max_length=64)
-
-
-@app.get("/")
+@app.get("/", response_model=HomeResponse, tags=["system"])
 def home():
     return {"status": "ok", "service": "zsafeguard-ai"}
 
 
-@app.get("/health")
+@app.get("/health", response_model=HealthResponse, tags=["system"])
 def health():
     return {"status": "ok"}
 
 
-@app.get("/metrics")
+@app.get("/metrics", response_model=MetricsResponse, tags=["analytics"])
 def metrics():
     total = len(risk_events)
     recent = list(risk_events)[-50:]
@@ -60,18 +70,13 @@ def metrics():
     }
 
 
-@app.get("/events")
-def events(limit: int = 20):
-    if limit < 1 or limit > 200:
-        raise HTTPException(status_code=400, detail="limit must be between 1 and 200")
+@app.get("/events", response_model=EventsResponse, tags=["analytics"])
+def events(limit: Annotated[int, Query(ge=1, le=200)] = 20):
     return {"events": list(risk_events)[-limit:]}
 
 
-@app.get("/report")
-def report(window: int = 100):
-    if window < 5 or window > MAX_EVENT_HISTORY:
-        raise HTTPException(status_code=400, detail=f"window must be between 5 and {MAX_EVENT_HISTORY}")
-
+@app.get("/report", response_model=ReportResponse, tags=["analytics"])
+def report(window: Annotated[int, Query(ge=5, le=MAX_EVENT_HISTORY)] = 100):
     snapshot = list(risk_events)[-window:]
     if not snapshot:
         return {
@@ -101,7 +106,7 @@ def report(window: int = 100):
     }
 
 
-@app.post("/analyze")
+@app.post("/analyze", response_model=AnalyzeResponse, tags=["inference"])
 def analyze(data: AnalyzeRequest):
     logger.info("Analyze request received with %d features", len(data.features))
     if API_KEY:
@@ -117,11 +122,8 @@ def analyze(data: AnalyzeRequest):
     return event
 
 
-@app.get("/stream")
-async def stream(interval_seconds: float = 2.0):
-    if interval_seconds < 0.5 or interval_seconds > 10:
-        raise HTTPException(status_code=400, detail="interval_seconds must be between 0.5 and 10")
-
+@app.get("/stream", tags=["streaming"])
+async def stream(interval_seconds: Annotated[float, Query(ge=0.5, le=10)] = 2.0):
     async def event_generator():
         last_seen = None
         while True:

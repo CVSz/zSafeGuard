@@ -184,3 +184,12 @@ bash codex.sh {basic|full|ultimate|orchestrator|release}
 
 อ่านคู่มือแบบละเอียดสำหรับ GitHub ได้ที่:
 - [`docs/GITHUB_REPO_GUIDE_TH.md`](docs/GITHUB_REPO_GUIDE_TH.md)
+
+
+## Quality, CI/CD, and Architecture
+
+- OpenAPI + request/response schema: ดูโค้ด `ai/main.py` และ `ai/schemas.py`
+- Unit/Integration tests: `ai/tests/` (pytest + live Uvicorn HTTP checks)
+- CI/CD workflow: `.github/workflows/ci-cd.yml`
+- C4 architecture doc: `docs/architecture/c4-model.md`
+- Load test + baseline: `ai/loadtest/locustfile.py` และ `docs/performance-baseline.md`
